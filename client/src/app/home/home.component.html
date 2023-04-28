@@ -1,11 +1,11 @@
 <div class="grid-container">
   <h1 class="mat-h1">Dashboard</h1>
   <mat-grid-list cols="2" rowHeight="350px">
-    <mat-grid-tile *ngFor="let card of cards | async" [colspan]="card.cols" [rowspan]="card.rows">
+    <mat-grid-tile *ngFor="let task of tasks | async" [colspan]="task.cols" [rowspan]="task.rows">
       <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-card-title>
-            {{card.title}}
+            {{task.title}}
             <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -15,9 +15,10 @@
             </mat-menu>
           </mat-card-title>
         </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <div>Card Content Here</div>
+        <mat-card-content class="dashboard-card-content" style="position: relative">
+          <div>{{task.content}}</div>
         </mat-card-content>
+        <button mat-raised-button color="primary" class="card-button">Mark Complete</button>
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>
