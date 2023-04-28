@@ -10,7 +10,7 @@ const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
-  password: process.env.DB_PASS,
+  password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT
 });
 pool.on('error', (err, client) => {
@@ -18,20 +18,40 @@ pool.on('error', (err, client) => {
   process.exit(-1);
 });
 
-let task = [];
+let tasks = [];
 const rootUrl = '/api';
 
 app.use(bodyParser.json());
 
 app.get(`${rootUrl}/task`, (req, res) => {
-  res.json(task);
+  ;(async () => {
+    const {rows} = await pool.query('SELECT * FROM task');
+    res.json(rows);
+  })().catch(e => {
+    console.error(e.stack);
+    res.json({error: e.stack});
+  })
 });
 
 app.post(`${rootUrl}/task`, (req, res) => {
-  const newTask = req.body;
-  task = [];
-  task.push(newTask);
-  res.json(newTask);
+  const newTasks = req.body;
+  (async () => {
+    const client = await pool.connect();
+    try {
+      for (const task of newTasks) {
+          await client.query(
+            `INSERT INTO public.task (title, content, iscomplete)
+             VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING id, title, content, iscomplete`,
+            [task.title, task.content, task.taskComplete]);
+      }
+      tasks = [...tasks, ...newTasks];
+      res.status(201).json(tasks);
+    } finally {
+      client.release();
+    }
+  })().catch(e => {
+    res.json({error: e.stack});
+  });
 });
 
 app.get(`${rootUrl}/status`, (req, res) => {

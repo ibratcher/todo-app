@@ -23,19 +23,19 @@ export class TasksService {
   ];
 
   constructor(private http: HttpClient) {
-    this.getTasksFromBackend()
     console.log(this.tasks);
+    this.postTasksToBackend(new Task('Task test', 'This is the test task', false));
   }
 
   getTasksFromBackend() {
     this.http.get<Task[]>(this.rootURL + 'task').subscribe((tasks: Task[]) => {
-      console.log(tasks);
       this.tasksChanged.next(this.tasks.slice());
       return tasks;
     });
   }
 
-  postTaskToBackend(task: Task) {
+  postTasksToBackend(newTask: Task) {
+    this.tasks.push(newTask);
     this.http.post<Task[]>(this.rootURL + 'task', this.tasks).subscribe((tasks: Task[]) => {
         console.log(tasks);
       }
