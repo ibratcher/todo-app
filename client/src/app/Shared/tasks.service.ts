@@ -3,7 +3,7 @@ import {Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
 export class Task {
-  constructor(public title: string, public content: string, public taskComplete: boolean, public cols: number, public rows: number) {
+  constructor(public title: string, public content: string, public taskComplete: boolean) {
   }
 }
 
@@ -13,13 +13,13 @@ export class Task {
 
 export class TasksService {
   tasksChanged = new Subject<Task[]>();
-  rootURL = 'https://localhost:3080/api/';
+  rootURL = '/api/';
 
   private tasks: Task[] = [
-    new Task('Task 1', "This is task 1", false, 1, 1),
-    new Task('Task 2', 'This is task 2', false, 1, 1),
-    new Task('Task 3', 'This is task 3', false, 1, 1),
-    new Task('Task 4', 'This is task 4', false, 1, 1),
+    new Task('Task 1', "This is task 1", false),
+    new Task('Task 2', 'This is task 2', false),
+    new Task('Task 3', 'This is task 3', false),
+    new Task('Task 4', 'This is task 4', false),
   ];
 
   constructor(private http: HttpClient) {
@@ -27,12 +27,18 @@ export class TasksService {
 
   //Grab all tasks from the backend
   getTasksFromBackend() {
-    this.http.get<Task[]>(this.rootURL + 'tasks').subscribe((tasks: Task[]) => {
+    this.http.get<Task[]>(this.rootURL + 'task').subscribe((tasks: Task[]) => {
       this.tasks = tasks;
       this.tasksChanged.next(this.tasks.slice());
     });
   }
+
   getTasks() {
+    this.http.post<Task[]>(this.rootURL + 'task', this.tasks).subscribe((tasks: Task[]) => {
+        this.tasks = tasks;
+        this.tasksChanged.next(this.tasks.slice());
+      }
+    );
     return this.tasks.slice();
   }
 }
