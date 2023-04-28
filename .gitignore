@@ -36,6 +36,7 @@ client/.angular/cache
 /libpeerconnection.log
 testem.log
 /typings
+server/.env
 
 # System files
 .DS_Store
