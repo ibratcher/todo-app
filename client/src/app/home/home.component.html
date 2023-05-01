@@ -1,7 +1,7 @@
 <div class="grid-container">
   <h1 class="mat-h1">Dashboard</h1>
   <mat-grid-list cols="2" rowHeight="350px">
-    <mat-grid-tile *ngFor="let task of tasks | async" colspan="1" rowspan="1">
+    <mat-grid-tile *ngFor="let task of tasksList" colspan="1" rowspan="1">
       <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-card-title>
@@ -18,7 +18,7 @@
         <mat-card-content class="dashboard-card-content" style="position: relative">
           <div>{{task.content}}</div>
         </mat-card-content>
-        <button mat-raised-button color="primary" class="card-button">Mark Complete</button>
+        <button mat-raised-button color="primary" class="card-button" [disabled]="task.iscomplete" (click)="markTaskComplete(task.id)">{{task.iscomplete ? 'Completed' : 'Mark Complete'}}</button>
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>

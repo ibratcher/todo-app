@@ -3,7 +3,7 @@ import {Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
 export class Task {
-  constructor(public title: string, public content: string, public taskComplete: boolean) {
+  constructor(public title: string, public content: string, public iscomplete: boolean, public id?: number) {
   }
 }
 
@@ -15,29 +15,47 @@ export class TasksService {
   tasksChanged = new Subject<Task[]>();
   rootURL = '/api/';
 
-  private tasks: Task[] = [
-    new Task('Task 1', 'This is the first task', false),
-    new Task('Task 2', 'This is the second task', false),
-    new Task('Task 3', 'This is the third task', false),
-    new Task('Task 4', 'This is the fourth task', false),
-  ];
+  private tasks: Task[] = [];
 
   constructor(private http: HttpClient) {
-    console.log(this.tasks);
-    this.postTasksToBackend(new Task('Task test', 'This is the test task', false));
+  }
+
+  addTask(task: Task) {
+    this.tasks.push(task);
+    this.postTasksToBackend();
+  }
+
+  getTask(id: number) {
+    return this.http.get<Task[]>(this.rootURL + 'task/' + id);
+  }
+
+  //Create a new put request to update the task
+  completeTask(id: number) {
+    const task = this.tasks.find(t => t.id === id);
+    if (task) {
+      task.iscomplete = true;
+      this.http.put<Task>(this.rootURL + 'task/' + id, task).subscribe(() => {
+          this.tasksChanged.next(this.tasks.slice());
+        }
+      );
+    }
+  }
+
+  deleteTask(index: number) {
+    this.tasks.splice(index, 1);
+    this.postTasksToBackend();
   }
 
   getTasksFromBackend() {
     this.http.get<Task[]>(this.rootURL + 'task').subscribe((tasks: Task[]) => {
+      this.tasks = tasks;
       this.tasksChanged.next(this.tasks.slice());
-      return tasks;
     });
   }
 
-  postTasksToBackend(newTask: Task) {
-    this.tasks.push(newTask);
-    this.http.post<Task[]>(this.rootURL + 'task', this.tasks).subscribe((tasks: Task[]) => {
-        console.log(tasks);
+  postTasksToBackend() {
+    this.http.post<Task[]>(this.rootURL + 'task', this.tasks).subscribe(() => {
+        this.tasksChanged.next(this.tasks.slice());
       }
     );
   }
