@@ -13,7 +13,7 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT
 });
-pool.on('error', (err, client) => {
+pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
   process.exit(-1);
 });
@@ -33,16 +33,27 @@ app.get(`${rootUrl}/task`, (req, res) => {
   })
 });
 
+app.get(`${rootUrl}/task/:id`, (req, res) => {
+  const id = parseInt(req.params.id);
+  (async () => {
+    const {rows} = await pool.query('SELECT * FROM task WHERE id = $1', [id]);
+    res.json(rows);
+  })().catch(e => {
+    console.error(e.stack);
+    res.json({error: e.stack});
+  })
+});
+
 app.post(`${rootUrl}/task`, (req, res) => {
   const newTasks = req.body;
   (async () => {
     const client = await pool.connect();
     try {
       for (const task of newTasks) {
-          await client.query(
-            `INSERT INTO public.task (title, content, iscomplete)
-             VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING id, title, content, iscomplete`,
-            [task.title, task.content, task.taskComplete]);
+        await client.query(
+          `INSERT INTO public.task (title, content, iscomplete)
+           VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING id, title, content, iscomplete`,
+          [task.title, task.content, task.iscomplete]);
       }
       tasks = [...tasks, ...newTasks];
       res.status(201).json(tasks);
@@ -52,6 +63,32 @@ app.post(`${rootUrl}/task`, (req, res) => {
   })().catch(e => {
     res.json({error: e.stack});
   });
+});
+
+app.put(`${rootUrl}/task/:id`, (req, res) => {
+  const id = parseInt(req.params.id);
+  const isComplete = req.body.iscomplete;
+  (async () => {
+    const client = await pool.connect();
+    try {
+      const {rows} = await client.query(
+        `UPDATE public.task
+         SET iscomplete = $1
+         WHERE id = $2 RETURNING id, title, content, iscomplete`,
+        [isComplete, id]);
+      for(let i = 0; i < tasks.length; i++) {
+        if(tasks[i].id === id) {
+          tasks[i].iscomplete = isComplete;
+          break;
+        }
+      }
+      res.status(200).json(rows);
+    } finally {
+      client.release();
+    }
+  })().catch(e => {
+    res.json({error: e.stack});
+  })
 });
 
 app.get(`${rootUrl}/status`, (req, res) => {

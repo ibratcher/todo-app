@@ -1,20 +1,38 @@
-import { Component } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import {TasksService} from "../Shared/tasks.service";
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Task, TasksService} from "../Shared/tasks.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy{
   /** Based on the screen size, switch from standard to one column per row */
-  tasks = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
-    map(() => {
-      return this.tasksService.getTasks();
-    })
+  tasksList: Task[] = [];
+  tasks: Subscription = this.tasksService.tasksChanged.subscribe(
+    (tasks: Task[]) => {
+      console.log(tasks)
+      this.tasksList = tasks;
+    }
   );
 
-  constructor(private breakpointObserver: BreakpointObserver, private tasksService: TasksService) {}
+  constructor(private tasksService: TasksService) {}
+
+
+  ngOnInit(): void {
+    this.tasksService.getTasksFromBackend();
+  }
+
+  markTaskComplete(id: number | undefined) {
+  if(id)
+  {
+    this.tasksService.completeTask(id);
+  }
+  }
+  ngOnDestroy(): void {
+    this.tasks.unsubscribe();
+  }
+
+  protected readonly Task = Task;
 }
