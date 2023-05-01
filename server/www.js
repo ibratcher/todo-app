@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 
 app.get(`${rootUrl}/task`, (req, res) => {
   ;(async () => {
-    const {rows} = await pool.query('SELECT * FROM task');
+    const {rows} = await pool.query('SELECT * FROM task ORDER BY id ASC');
     res.json(rows);
   })().catch(e => {
     console.error(e.stack);
@@ -53,10 +53,11 @@ app.post(`${rootUrl}/task`, (req, res) => {
       for (const task of newTasks) {
         await client.query(
           `INSERT INTO public.task (title, content, iscomplete)
-           VALUES ($1, $2, $3) ON CONFLICT DO NOTHING RETURNING id, title, content, iscomplete`,
+           VALUES ($1, $2, $3) ON CONFLICT (title, content) DO NOTHING RETURNING id, title, content, iscomplete`,
           [task.title, task.content, task.iscomplete]);
+
       }
-      tasks = [...tasks, ...newTasks];
+      tasks = [...newTasks];
       res.status(201).json(tasks);
     } finally {
       client.release();
@@ -66,7 +67,7 @@ app.post(`${rootUrl}/task`, (req, res) => {
   });
 });
 
-app.put(`${rootUrl}/task/:id`, (req, res) => {
+app.patch(`${rootUrl}/task/:id`, (req, res) => {
   const id = parseInt(req.params.id);
   const isComplete = req.body.iscomplete;
   (async () => {
@@ -77,8 +78,8 @@ app.put(`${rootUrl}/task/:id`, (req, res) => {
          SET iscomplete = $1
          WHERE id = $2 RETURNING id, title, content, iscomplete`,
         [isComplete, id]);
-      for(let i = 0; i < tasks.length; i++) {
-        if(tasks[i].id === id) {
+      for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === id) {
           tasks[i].iscomplete = isComplete;
           break;
         }
@@ -92,6 +93,29 @@ app.put(`${rootUrl}/task/:id`, (req, res) => {
   })
 });
 
+app.delete(`${rootUrl}/task/:id`, (req, res) => {
+  const id = parseInt(req.params.id);
+  (async () => {
+    const client = await pool.connect();
+    try {
+      const { rows } = await client.query(
+        `DELETE FROM public.task
+         WHERE id = $1 returning id, title, content, iscomplete`,
+        [id]);
+      for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === id) {
+          tasks.splice(i, 1);
+          break;
+        }
+      }
+      res.status(200).json(rows);
+    } finally {
+      client.release();
+    }
+  })().catch(e => {
+    res.json({error: e.stack});
+  })
+});
 app.get(`${rootUrl}/status`, (req, res) => {
   res.json({info: 'Node.js, Express, and Postgres API'});
 });

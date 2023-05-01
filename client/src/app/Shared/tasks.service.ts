@@ -34,16 +34,21 @@ export class TasksService {
     const task = this.tasks.find(t => t.id === id);
     if (task) {
       task.iscomplete = true;
-      this.http.put<Task>(this.rootURL + 'task/' + id, task).subscribe(() => {
+      this.http.patch<Task>(this.rootURL + 'task/' + id, task).subscribe(() => {
           this.tasksChanged.next(this.tasks.slice());
         }
       );
     }
   }
 
-  deleteTask(index: number) {
-    this.tasks.splice(index, 1);
-    this.postTasksToBackend();
+  deleteTask(id: number) {
+    const task = this.tasks.find(t => t.id === id);
+    if (task) {
+      this.tasks.splice(this.tasks.indexOf(task), 1);
+    }
+    this.http.delete<Task>(this.rootURL + 'task/' + id).subscribe(() => {
+      this.tasksChanged.next(this.tasks.slice());
+    });
   }
 
   getTasksFromBackend() {

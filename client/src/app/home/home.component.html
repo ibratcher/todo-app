@@ -11,7 +11,7 @@
             </button>
             <mat-menu #menu="matMenu" xPosition="before">
               <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
+              <button mat-menu-item (click)="onDelete(task.id)">Remove</button>
             </mat-menu>
           </mat-card-title>
         </mat-card-header>

@@ -7,7 +7,7 @@ import {Subscription} from "rxjs";
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, OnDestroy{
+export class HomeComponent implements OnInit, OnDestroy {
   /** Based on the screen size, switch from standard to one column per row */
   tasksList: Task[] = [];
   tasks: Subscription = this.tasksService.tasksChanged.subscribe(
@@ -17,7 +17,8 @@ export class HomeComponent implements OnInit, OnDestroy{
     }
   );
 
-  constructor(private tasksService: TasksService) {}
+  constructor(private tasksService: TasksService) {
+  }
 
 
   ngOnInit(): void {
@@ -25,11 +26,17 @@ export class HomeComponent implements OnInit, OnDestroy{
   }
 
   markTaskComplete(id: number | undefined) {
-  if(id)
-  {
-    this.tasksService.completeTask(id);
+    if (id) {
+      this.tasksService.completeTask(id);
+    }
   }
+
+  onDelete(id: number | undefined) {
+    if (id) {
+      this.tasksService.deleteTask(id);
+    }
   }
+
   ngOnDestroy(): void {
     this.tasks.unsubscribe();
   }
