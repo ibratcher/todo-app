@@ -34,6 +34,16 @@ app.get(`${rootUrl}/task`, (req, res) => {
   })
 });
 
+app.get(`${rootUrl}/task/complete`, (req, res) => {
+  ;(async () => {
+    const {rows} = await pool.query('SELECT * FROM task WHERE iscomplete = true ORDER BY id ASC');
+    res.json(rows);
+  })().catch(e => {
+    console.error(e.stack);
+    res.error({error: e.stack});
+  });
+});
+
 app.get(`${rootUrl}/task/:id`, (req, res) => {
   const id = parseInt(req.params.id);
   (async () => {
@@ -50,11 +60,11 @@ app.post(`${rootUrl}/task`, (req, res) => {
   (async () => {
     const client = await pool.connect();
     try {
-      for (const task of newTasks) {
+      for (const {title, content, iscomplete} of newTasks) {
         await client.query(
           `INSERT INTO public.task (title, content, iscomplete)
            VALUES ($1, $2, $3) ON CONFLICT (title, content) DO NOTHING RETURNING id, title, content, iscomplete`,
-          [task.title, task.content, task.iscomplete]);
+          [title, content, iscomplete]);
 
       }
       tasks = [...newTasks];
@@ -98,8 +108,9 @@ app.delete(`${rootUrl}/task/:id`, (req, res) => {
   (async () => {
     const client = await pool.connect();
     try {
-      const { rows } = await client.query(
-        `DELETE FROM public.task
+      const {rows} = await client.query(
+        `DELETE
+         FROM public.task
          WHERE id = $1 returning id, title, content, iscomplete`,
         [id]);
       for (let i = 0; i < tasks.length; i++) {

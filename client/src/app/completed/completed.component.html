@@ -1,0 +1,25 @@
+<div class="grid-container">
+  <h1 class="mat-h1">All Completed Tasks</h1>
+  <mat-grid-list cols="2" rowHeight="350px">
+    <mat-grid-tile *ngFor="let task of tasksList" colspan="1" rowspan="1">
+      <mat-card class="dashboard-card">
+        <mat-card-header>
+          <mat-card-title>
+            {{task.title}}
+            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+              <button mat-menu-item>Expand</button>
+              <button mat-menu-item (click)="onDelete(task.id)">Remove</button>
+            </mat-menu>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content" style="position: relative">
+          <div>{{task.content}}</div>
+        </mat-card-content>
+        <button mat-raised-button color="primary" class="card-button" [disabled]="task.iscomplete" (click)="markTaskComplete(task.id)">{{task.iscomplete ? 'Completed' : 'Mark Complete'}}</button>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

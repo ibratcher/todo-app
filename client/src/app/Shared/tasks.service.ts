@@ -58,6 +58,13 @@ export class TasksService {
     });
   }
 
+  getCompletedTasksFromBackend() {
+    this.http.get<Task[]>(this.rootURL + 'task/complete').subscribe((tasks: Task[]) => {
+      this.tasks = tasks;
+      this.tasksChanged.next(this.tasks.slice());
+    });
+  }
+
   postTasksToBackend() {
     this.http.post<Task[]>(this.rootURL + 'task', this.tasks).subscribe(() => {
         this.tasksChanged.next(this.tasks.slice());
