@@ -17,12 +17,18 @@ import {MatMenuModule} from '@angular/material/menu';
 import {HttpClientModule} from "@angular/common/http";
 import {RouterOutlet} from "@angular/router";
 import {AppRoutingModule} from "./app-routing.module";
+import { CreateTaskComponent } from './create-task/create-task.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavBarComponent,
-    HomeComponent
+    HomeComponent,
+    CreateTaskComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +44,11 @@ import {AppRoutingModule} from "./app-routing.module";
     MatMenuModule,
     HttpClientModule,
     AppRoutingModule,
-    RouterOutlet
+    RouterOutlet,
+    MatInputModule,
+    MatSelectModule,
+    MatRadioModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
