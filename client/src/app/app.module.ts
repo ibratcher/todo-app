@@ -15,6 +15,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card';
 import {MatMenuModule} from '@angular/material/menu';
 import {HttpClientModule} from "@angular/common/http";
+import {RouterOutlet} from "@angular/router";
+import {AppRoutingModule} from "./app-routing.module";
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import {HttpClientModule} from "@angular/common/http";
     MatGridListModule,
     MatCardModule,
     MatMenuModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule,
+    RouterOutlet
   ],
   providers: [],
   bootstrap: [AppComponent]
