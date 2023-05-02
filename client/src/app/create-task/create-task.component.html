@@ -1,4 +1,4 @@
-<form [formGroup]="addressForm" novalidate (ngSubmit)="onSubmit()">
+<form [formGroup]="taskForm" novalidate (ngSubmit)="onSubmit()">
   <mat-card class="shipping-card">
     <mat-card-header>
       <mat-card-title>Create New Task</mat-card-title>
@@ -8,7 +8,7 @@
         <div class="col">
           <mat-form-field class="full-width">
             <input matInput placeholder="Task Title" formControlName="taskTitle">
-            <mat-error *ngIf="addressForm.controls['taskTitle'].hasError('required')">
+            <mat-error *ngIf="taskForm.controls['taskTitle'].hasError('required')">
               Title is <strong>required</strong>
             </mat-error>
           </mat-form-field>
@@ -18,7 +18,7 @@
         <div class="col">
           <mat-form-field class="full-width">
             <textarea matInput placeholder="Description" formControlName="description"></textarea>
-            <mat-error *ngIf="addressForm.controls['description'].hasError('required')">
+            <mat-error *ngIf="taskForm.controls['description'].hasError('required')">
               Description is <strong>required</strong>
             </mat-error>
           </mat-form-field>
