@@ -17,7 +17,7 @@
         <mat-card-content class="dashboard-card-content" style="position: relative">
           <div>{{task.content}}</div>
         </mat-card-content>
-        <button mat-raised-button color="primary" class="card-button" [disabled]="task.iscomplete" (click)="markTaskComplete(task.id)">{{task.iscomplete ? 'Completed' : 'Mark Complete'}}</button>
+        <button mat-raised-button color="primary" class="card-button" [disabled]="task.is_complete" (click)="markTaskComplete(task.id)">{{task.is_complete ? 'Completed' : 'Mark Complete'}}</button>
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>

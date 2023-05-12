@@ -36,7 +36,7 @@ app.get(`${rootUrl}/task`, (req, res) => {
 
 app.get(`${rootUrl}/task/complete`, (req, res) => {
   ;(async () => {
-    const {rows} = await pool.query('SELECT * FROM task WHERE iscomplete = true ORDER BY id ASC');
+    const {rows} = await pool.query('SELECT * FROM task WHERE is_complete = true ORDER BY id ASC');
     res.json(rows);
   })().catch(e => {
     console.error(e.stack);
@@ -60,11 +60,11 @@ app.post(`${rootUrl}/task`, (req, res) => {
   (async () => {
     const client = await pool.connect();
     try {
-      for (const {title, content, iscomplete} of newTasks) {
+      for (const {title, content, is_complete} of newTasks) {
         await client.query(
           `INSERT INTO public.task (title, content, iscomplete)
-           VALUES ($1, $2, $3) ON CONFLICT (title, content) DO NOTHING RETURNING id, title, content, iscomplete`,
-          [title, content, iscomplete]);
+           VALUES ($1, $2, $3) ON CONFLICT (title, content) DO NOTHING RETURNING id, title, content, is_complete`,
+          [title, content, is_complete]);
 
       }
       tasks = [...newTasks];
@@ -79,18 +79,18 @@ app.post(`${rootUrl}/task`, (req, res) => {
 
 app.patch(`${rootUrl}/task/:id`, (req, res) => {
   const id = parseInt(req.params.id);
-  const isComplete = req.body.iscomplete;
+  const isComplete = req.body.is_complete;
   (async () => {
     const client = await pool.connect();
     try {
       const {rows} = await client.query(
         `UPDATE public.task
-         SET iscomplete = $1
-         WHERE id = $2 RETURNING id, title, content, iscomplete`,
+         SET is_complete = $1
+         WHERE id = $2 RETURNING id, title, content, is_complete`,
         [isComplete, id]);
       for (let i = 0; i < tasks.length; i++) {
         if (tasks[i].id === id) {
-          tasks[i].iscomplete = isComplete;
+          tasks[i].is_complete = isComplete;
           break;
         }
       }
@@ -111,7 +111,7 @@ app.delete(`${rootUrl}/task/:id`, (req, res) => {
       const {rows} = await client.query(
         `DELETE
          FROM public.task
-         WHERE id = $1 returning id, title, content, iscomplete`,
+         WHERE id = $1 returning id, title, content, is_complete`,
         [id]);
       for (let i = 0; i < tasks.length; i++) {
         if (tasks[i].id === id) {

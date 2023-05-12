@@ -3,7 +3,7 @@ import {Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
 export class Task {
-  constructor(public title: string, public content: string, public iscomplete: boolean, public id?: number) {
+  constructor(public title: string, public content: string, public is_complete: boolean, public id?: number) {
   }
 }
 
@@ -33,7 +33,7 @@ export class TasksService {
   completeTask(id: number) {
     const task = this.tasks.find(t => t.id === id);
     if (task) {
-      task.iscomplete = true;
+      task.is_complete = true;
       this.http.patch<Task>(this.rootURL + 'task/' + id, task).subscribe(() => {
           this.tasksChanged.next(this.tasks.slice());
         }
