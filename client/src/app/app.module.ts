@@ -24,6 +24,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ReactiveFormsModule } from '@angular/forms';
 import {CompletedComponent} from "./completed/completed.component";
 
+import {AuthModule} from "@auth0/auth0-angular";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,7 +52,15 @@ import {CompletedComponent} from "./completed/completed.component";
     MatInputModule,
     MatSelectModule,
     MatRadioModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+
+    AuthModule.forRoot({
+      domain: 'dev-h0nhweyjlnbjrypk.us.auth0.com',
+      clientId: 'lBKbSm9FcfzQViaqcy6ZLPbEYUB4Jo7N',
+      authorizationParams: {
+        redirect_uri: window.location.origin
+      }
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
