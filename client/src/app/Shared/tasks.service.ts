@@ -3,7 +3,7 @@ import {Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
 export class Task {
-  constructor(public title: string, public content: string, public is_complete: boolean, public id?: number) {
+  constructor(public title: string, public content: string, public is_complete: boolean, public user_email: string, public id?: number) {
   }
 }
 
