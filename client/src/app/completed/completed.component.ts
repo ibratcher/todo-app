@@ -16,7 +16,11 @@ export class CompletedComponent implements OnInit, OnDestroy {
       this.tasksList = tasks;
     }
   );
-
+  email: Subscription = this.tasksService.emailChanged.subscribe(
+    (email: string) => {
+      console.log(email)
+      this.tasksService.getCompletedTasksFromBackend();
+    });
   constructor(private tasksService: TasksService) {
   }
 
@@ -39,6 +43,7 @@ export class CompletedComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.tasks.unsubscribe();
+    this.email.unsubscribe();
   }
 
 }

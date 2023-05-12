@@ -34,20 +34,31 @@ app.get(`${rootUrl}/task`, (req, res) => {
   })
 });
 
-app.get(`${rootUrl}/task/complete`, (req, res) => {
-  ;(async () => {
-    const {rows} = await pool.query('SELECT * FROM task WHERE is_complete = true ORDER BY id ASC');
-    res.json(rows);
-  })().catch(e => {
-    console.error(e.stack);
-    res.error({error: e.stack});
-  });
-});
-
 app.get(`${rootUrl}/task/:id`, (req, res) => {
   const id = parseInt(req.params.id);
   (async () => {
     const {rows} = await pool.query('SELECT * FROM task WHERE id = $1', [id]);
+    res.json(rows);
+  })().catch(e => {
+    console.error(e.stack);
+    res.json({error: e.stack});
+  })
+});
+
+app.get(`${rootUrl}/task/user/:email`, (req, res) => {
+  const user_email = req.params.email;
+  (async () => {
+    const {rows} = await pool.query('SELECT * FROM task WHERE user_email = $1', [user_email]);
+    res.json(rows);
+  })().catch(e => {
+    console.error(e.stack);
+    res.json({error: e.stack});
+  })
+});
+app.get(`${rootUrl}/task/user/:email/complete`, (req, res) => {
+  const user_email = req.params.email;
+  (async () => {
+    const {rows} = await pool.query('SELECT * FROM task WHERE user_email = $1 AND is_complete = true', [user_email]);
     res.json(rows);
   })().catch(e => {
     console.error(e.stack);

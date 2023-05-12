@@ -8,7 +8,6 @@ import {Subscription} from "rxjs";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  /** Based on the screen size, switch from standard to one column per row */
   tasksList: Task[] = [];
   tasks: Subscription = this.tasksService.tasksChanged.subscribe(
     (tasks: Task[]) => {
@@ -16,10 +15,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.tasksList = tasks;
     }
   );
+  email: Subscription = this.tasksService.emailChanged.subscribe(
+    (email: string) => {
+      console.log(email)
+      this.tasksService.getTasksFromBackend();
+    });
 
   constructor(private tasksService: TasksService) {
   }
-
 
   ngOnInit(): void {
     this.tasksService.getTasksFromBackend();
@@ -39,6 +42,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.tasks.unsubscribe();
+    this.email.unsubscribe();
   }
 
 }
