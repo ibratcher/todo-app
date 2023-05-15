@@ -1,6 +1,7 @@
 <div class="grid-container">
   <h1 class="mat-h1">Dashboard</h1>
-  <p *ngIf="tasksList.length == 0">Create a few tasks or log in to get started!</p>
+  <app-loading *ngIf="!loaded"></app-loading>
+  <p *ngIf="loaded && tasksList.length === 0">Create a few tasks to get started!</p>
   <mat-grid-list cols="2" rowHeight="350px">
     <mat-grid-tile *ngFor="let task of tasksList" colspan="1" rowspan="1">
       <mat-card class="dashboard-card">

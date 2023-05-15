@@ -27,7 +27,9 @@ export class TasksService implements OnDestroy{
     this.emailChanged.next(this.email);
   });
 
+  public tasksLoaded = new Subject<boolean>();
   constructor(private http: HttpClient, private auth: AuthService) {
+    this.tasksLoaded.next(false);
   }
 
   addTask(task: Task) {
@@ -64,6 +66,7 @@ export class TasksService implements OnDestroy{
   getTasksFromBackend() {
     this.http.get<Task[]>(this.rootURL + 'task/user/' + this.email).subscribe((tasks: Task[]) => {
       this.tasks = tasks;
+      this.tasksLoaded.next(true);
       this.tasksChanged.next(this.tasks.slice());
     });
   }
@@ -71,6 +74,7 @@ export class TasksService implements OnDestroy{
   getCompletedTasksFromBackend() {
     this.http.get<Task[]>(this.rootURL + 'task/user/' + this.email + '/complete').subscribe((tasks: Task[]) => {
       this.tasks = tasks;
+      this.tasksLoaded.next(true);
       this.tasksChanged.next(this.tasks.slice());
     });
   }

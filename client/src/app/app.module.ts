@@ -25,6 +25,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {CompletedComponent} from "./completed/completed.component";
 
 import {AuthModule} from "@auth0/auth0-angular";
+import { LoadingComponent } from './Shared/loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import {AuthModule} from "@auth0/auth0-angular";
     NavBarComponent,
     HomeComponent,
     CompletedComponent,
-    CreateTaskComponent
+    CreateTaskComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,

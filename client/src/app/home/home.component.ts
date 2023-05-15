@@ -21,6 +21,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.tasksService.getTasksFromBackend();
     });
 
+  loaded: boolean = false;
+
+  tasksLoaded: Subscription = this.tasksService.tasksLoaded.subscribe(
+    (loaded: boolean) => {
+      this.loaded = loaded;
+    });
+
   constructor(private tasksService: TasksService) {
   }
 
@@ -43,6 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.tasks.unsubscribe();
     this.email.unsubscribe();
+    this.tasksLoaded.unsubscribe();
   }
 
 }

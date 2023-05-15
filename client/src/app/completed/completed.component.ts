@@ -21,6 +21,14 @@ export class CompletedComponent implements OnInit, OnDestroy {
       console.log(email)
       this.tasksService.getCompletedTasksFromBackend();
     });
+
+  loaded: boolean = false;
+
+  tasksLoaded: Subscription = this.tasksService.tasksLoaded.subscribe(
+    (loaded: boolean) => {
+      this.loaded = loaded;
+    });
+
   constructor(private tasksService: TasksService) {
   }
 
@@ -44,6 +52,7 @@ export class CompletedComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.tasks.unsubscribe();
     this.email.unsubscribe();
+    this.tasksLoaded.unsubscribe();
   }
 
 }
