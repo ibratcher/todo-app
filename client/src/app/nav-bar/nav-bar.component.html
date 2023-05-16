@@ -18,7 +18,7 @@
       </button>
       <span>To-Do App</span>
       <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
-        <span style="position: sticky; left: 70%" *ngIf="auth.user$ | async as user">{{user.name}}</span>
+        <span style="position: sticky; left: 70%" *ngIf="auth.user$ | async as user">{{user.sub}}</span>
         <button type="button" style="left: 70%" aria-label="Logout" mat-button (click)="auth.logout()">Log out</button>
       </ng-container>
       <ng-template #loggedOut>

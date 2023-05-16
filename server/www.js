@@ -45,20 +45,20 @@ app.get(`${rootUrl}/task/:id`, (req, res) => {
   })
 });
 
-app.get(`${rootUrl}/task/user/:email`, (req, res) => {
-  const user_email = req.params.email;
+app.get(`${rootUrl}/task/user/:user_id`, (req, res) => {
+  const user_id = req.params.user_id;
   (async () => {
-    const {rows} = await pool.query('SELECT * FROM task WHERE user_email = $1', [user_email]);
+    const {rows} = await pool.query('SELECT * FROM task WHERE user_id = $1', [user_id]);
     res.json(rows);
   })().catch(e => {
     console.error(e.stack);
     res.json({error: e.stack});
   })
 });
-app.get(`${rootUrl}/task/user/:email/complete`, (req, res) => {
-  const user_email = req.params.email;
+app.get(`${rootUrl}/task/user/:user_id/complete`, (req, res) => {
+  const user_id = req.params.user_id;
   (async () => {
-    const {rows} = await pool.query('SELECT * FROM task WHERE user_email = $1 AND is_complete = true', [user_email]);
+    const {rows} = await pool.query('SELECT * FROM task WHERE user_id = $1 AND is_complete = true', [user_id]);
     res.json(rows);
   })().catch(e => {
     console.error(e.stack);
@@ -71,11 +71,11 @@ app.post(`${rootUrl}/task`, (req, res) => {
   (async () => {
     const client = await pool.connect();
     try {
-      for (const {title, content, is_complete, user_email} of newTasks) {
+      for (const {title, content, is_complete, user_id} of newTasks) {
         await client.query(
-          `INSERT INTO public.task (title, content, is_complete, user_email)
-           VALUES ($1, $2, $3, $4) ON CONFLICT (title, content) DO NOTHING RETURNING id, title, content, is_complete, user_email`,
-          [title, content, is_complete, user_email]);
+          `INSERT INTO public.task (title, content, is_complete, user_id)
+           VALUES ($1, $2, $3, $4) ON CONFLICT (title, content) DO NOTHING RETURNING id, title, content, is_complete, user_id`,
+          [title, content, is_complete, user_id]);
 
       }
       tasks = [...newTasks];
@@ -88,8 +88,8 @@ app.post(`${rootUrl}/task`, (req, res) => {
   });
 });
 
-app.patch(`${rootUrl}/task/:id`, (req, res) => {
-  const id = parseInt(req.params.id);
+app.patch(`${rootUrl}/task/:task_id`, (req, res) => {
+  const id = parseInt(req.params.task_id);
   const isComplete = req.body.is_complete;
   (async () => {
     const client = await pool.connect();
@@ -97,7 +97,7 @@ app.patch(`${rootUrl}/task/:id`, (req, res) => {
       const {rows} = await client.query(
         `UPDATE public.task
          SET is_complete = $1
-         WHERE id = $2 RETURNING id, title, content, is_complete, user_email`,
+         WHERE id = $2 RETURNING id, title, content, is_complete, user_id`,
         [isComplete, id]);
       for (let i = 0; i < tasks.length; i++) {
         if (tasks[i].id === id) {
@@ -114,15 +114,15 @@ app.patch(`${rootUrl}/task/:id`, (req, res) => {
   })
 });
 
-app.delete(`${rootUrl}/task/:id`, (req, res) => {
-  const id = parseInt(req.params.id);
+app.delete(`${rootUrl}/task/:task_id`, (req, res) => {
+  const id = parseInt(req.params.task_id);
   (async () => {
     const client = await pool.connect();
     try {
       const {rows} = await client.query(
         `DELETE
          FROM public.task
-         WHERE id = $1 returning id, title, content, is_complete, user_email`,
+         WHERE id = $1 returning id, title, content, is_complete, user_id`,
         [id]);
       for (let i = 0; i < tasks.length; i++) {
         if (tasks[i].id === id) {
