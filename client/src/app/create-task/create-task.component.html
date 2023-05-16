@@ -11,6 +11,9 @@
             <mat-error *ngIf="taskForm.controls['taskTitle'].hasError('required')">
               Title is <strong>required</strong>
             </mat-error>
+            <mat-error *ngIf="taskForm.controls['taskTitle'].hasError('minlength')">
+              Title must be at least <strong>5 characters</strong>
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -20,6 +23,9 @@
             <textarea matInput placeholder="Description" formControlName="description"></textarea>
             <mat-error *ngIf="taskForm.controls['description'].hasError('required')">
               Description is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="taskForm.controls['description'].hasError('minlength')">
+              Description must be at least <strong>10 characters</strong>
             </mat-error>
           </mat-form-field>
         </div>

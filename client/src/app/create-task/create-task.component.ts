@@ -12,8 +12,8 @@ import {Router} from "@angular/router";
 })
 export class CreateTaskComponent implements OnInit, OnDestroy {
   taskForm = this.fb.group({
-    taskTitle: new FormControl('', Validators.required),
-    description: new FormControl('', Validators.required),
+    taskTitle: new FormControl('', [Validators.required, Validators.minLength(5)]),
+    description: new FormControl('', [Validators.required, Validators.minLength(10)]),
     isComplete: new FormControl('false', Validators.required)
   });
 
