@@ -18,11 +18,11 @@ export class CreateTaskComponent implements OnInit, OnDestroy {
   });
 
   authSub: Subscription = new Subscription();
-  email: string = '';
+  user_id: string = '';
   constructor(private fb: FormBuilder, private tasksService: TasksService, private auth: AuthService, private router: Router) {}
   ngOnInit(): void {
         this.authSub = this.auth.user$.subscribe( (profile) => {
-          this.email = profile!.email!;
+          this.user_id = profile!.sub!;
         })
     }
 
@@ -30,7 +30,7 @@ export class CreateTaskComponent implements OnInit, OnDestroy {
     const title = <string>this.taskForm.value.taskTitle;
     const description = <string>this.taskForm.value.description;
     const isComplete = (this.taskForm.value.isComplete === 'true'); // convert string to boolean
-    const task: Task = new Task(title, description, isComplete, this.email);
+    const task: Task = new Task(title, description, isComplete, this.user_id);
     this.tasksService.addTask(task);
     this.router.navigate(['/']);
   }

@@ -4,7 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {AuthService} from "@auth0/auth0-angular";
 
 export class Task {
-  constructor(public title: string, public content: string, public is_complete: boolean, public user_email: string, public id?: number) {
+  constructor(public title: string, public content: string, public is_complete: boolean, public user_id: string, public id?: number) {
   }
 }
 
@@ -19,11 +19,13 @@ export class TasksService implements OnDestroy{
   private tasks: Task[] = [];
 
   private email: string = 'no-email-entered';
+  private subject: string = 'no-subject-entered';
 
   emailChanged = new Subject<string>();
 
   authSub: Subscription = this.auth.user$.subscribe( (profile) => {
     this.email = profile!.email!;
+    this.subject = profile!.sub!;
     this.emailChanged.next(this.email);
   });
 
@@ -64,7 +66,7 @@ export class TasksService implements OnDestroy{
   }
 
   getTasksFromBackend() {
-    this.http.get<Task[]>(this.rootURL + 'task/user/' + this.email).subscribe((tasks: Task[]) => {
+    this.http.get<Task[]>(this.rootURL + 'task/user/' + this.subject).subscribe((tasks: Task[]) => {
       this.tasks = tasks;
       this.tasksLoaded.next(true);
       this.tasksChanged.next(this.tasks.slice());
@@ -72,7 +74,7 @@ export class TasksService implements OnDestroy{
   }
 
   getCompletedTasksFromBackend() {
-    this.http.get<Task[]>(this.rootURL + 'task/user/' + this.email + '/complete').subscribe((tasks: Task[]) => {
+    this.http.get<Task[]>(this.rootURL + 'task/user/' + this.subject + '/complete').subscribe((tasks: Task[]) => {
       this.tasks = tasks;
       this.tasksLoaded.next(true);
       this.tasksChanged.next(this.tasks.slice());
