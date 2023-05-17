@@ -14,6 +14,8 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT
 });
+
+app.use('/', express.static('../client/dist/todo-app'));
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
   process.exit(-1);
