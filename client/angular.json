@@ -64,12 +64,10 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "todo-app:build:production",
-              "proxyConfig": "proxy.conf.json"
+              "browserTarget": "todo-app:build:production"
             },
             "development": {
-              "browserTarget": "todo-app:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "browserTarget": "todo-app:build:development"
             }
           },
           "defaultConfiguration": "development"
