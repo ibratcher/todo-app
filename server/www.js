@@ -12,10 +12,12 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT
+  port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-app.use('/', express.static('../client/dist/todo-app'));
 pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
   process.exit(-1);
@@ -149,7 +151,7 @@ app.get('/', (req, res) => {
 // Listen to the specified port, otherwise 3080
 const PORT = process.env.PORT || 3080;
 const server = app.listen(PORT, () => {
-  console.log(`Server Running: http://localhost:${PORT}`);
+  console.log(`Server Running: http://3.15.149.3:${PORT}`);
 });
 /**
  * The SIGTERM signal is a generic signal used to cause program
