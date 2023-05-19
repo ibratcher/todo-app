@@ -14,7 +14,7 @@ export class Task {
 
 export class TasksService implements OnDestroy{
   tasksChanged = new Subject<Task[]>();
-  rootURL = '/api/';
+  rootURL = 'ec2-3-15-149-3.us-east-2.compute.amazonaws.com:3080/api/';
 
   private tasks: Task[] = [];
 
