@@ -27,7 +27,6 @@ let tasks = [];
 const rootUrl = '/api';
 
 app.use(bodyParser.json());
-app.use('/', express.static('../client/dist/todo-app'));
 
 app.get(`${rootUrl}/task`, (req, res) => {
   ;(async () => {
