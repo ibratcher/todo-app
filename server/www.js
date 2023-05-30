@@ -2,6 +2,8 @@ require('dotenv').config();
 
 
 const express = require('express');
+const cors = require('cors');
+
 const bodyParser = require("body-parser");
 const app = express();
 
@@ -26,6 +28,7 @@ pool.on('error', (err) => {
 let tasks = [];
 const rootUrl = '/api';
 
+app.use(cors());
 app.use(bodyParser.json());
 
 app.get(`${rootUrl}/task`, (req, res) => {
